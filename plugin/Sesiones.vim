@@ -1,7 +1,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " File:  "Sesiones.vim"
-" URL:  http://vim.sourceforge.net/script.php?script_id=
-" Version: 0.1
+" URL:  http://vim.sourceforge.net/script.php?script_id=3542
+" Version: 0.2
 " Last Modified: 06/04/2011
 " Author: jmpicaza at gmail dot com
 " Description: Plugin for managing sesions the easy way
@@ -28,43 +28,58 @@
 " Function for writing and loading sessions
 """""""""""""""""""""""""""""""""""""""""""
 function! Sesiones(save_load)
-	"echomsg "<F3> to save, <S-F3> to load, <C-S-F3> to overwrite, d<F3> to delete"
-	" TODO: let customize l:path from within .vimrc
-	let l:path=expand($VIM)."/vimfiles/session/".substitute(substitute(expand('%:p').'.vim',"\\","=+","g"),":","=-","")
+	"echomsg "<F3> to save, <Shift-F3> to load, <Crtl-Shift-F3> to overwrite, d<F3> to delete"
+	if exists('g:sesiones_path')
+		let l:sesiones_path = g:sesiones_path
+	else
+		if has('unix') || has('macunix')
+			let l:sesiones_path = $HOME . '/.vimSessions'
+		else
+			let l:sesiones_path = $VIM . '/_vimSessions'
+			if has('win32')
+				" MS-Windows
+				if $USERPROFILE != ''
+					let l:sesiones_path = $USERPROFILE . '/_vimSessions'
+				endif
+			endif
+		endif
+	endif
+
+	let l:sesiones_path=substitute(expand(l:sesiones_path),"\\","\/","g") . "/" . substitute(substitute(expand('%:p').'.vim',"\\","=+","g"),":","=-","")
 	if (a:save_load == 0)
-		if (filewritable(l:path))
+		if (filewritable(l:sesiones_path))
 			echohl MoreMsg
-			echomsg "Already exists a session for this file. Use <C-S-F3> for Overwriting or <S-F3> to Load."
+			echomsg "WARNING: A session already exists for this file. Use <Crtl-Shift-F3> for Overwriting or <Shift-F3> to Load."
 			echohl None
 		else
-			exe ":mksession " . l:path
+			exe ":mksession " . l:sesiones_path
 			echohl NonText
-			echomsg "Session successfully saved in file: " . l:path
+			echomsg "Session successfully saved in file: " . l:sesiones_path
 			echohl None
 		endif
 	elseif (a:save_load == 1)
-		if (filereadable(l:path))
-			exe "source " . l:path
+		if (filereadable(l:sesiones_path))
+			exe "source " . l:sesiones_path
 		else
 			echohl ErrorMSG
-			echomsg "ERROR: Does not exist a session associated to the file: " . expand('%')
+			echomsg "WARNING: Does not exist a session associated to the file: " . expand('%')
 			echohl None
 		endif
 	elseif (a:save_load == 2)
-		if (filewritable(l:path))
-			exe ":mksession! " . l:path
+		if (filewritable(l:sesiones_path))
+			exe ":mksession! " . l:sesiones_path
 			echohl NonText
 			echomsg "Session successfully overwritten"
 			echohl None
 		else
 			echohl ErrorMSG
-			echomsg "ERROR: Session does not exist. Use <F3> to create it"
+			echomsg "WARNING: Session does not exist. Use <F3> to create it"
 			echohl None
 		end
 	elseif (a:save_load == 99)
-		if (delete(l:path))
+		if (delete(l:sesiones_path))
 			echohl ErrorMSG
-			echomsg "ERROR: There was not possible to delete the file: " . l:path
+			echomsg "ERROR: There was not possible to delete the file: " . l:sesiones_path
 			echohl None
 		else
 			echohl NonText

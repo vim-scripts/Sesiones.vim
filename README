@@ -1,16 +1,15 @@
 This is a mirror of http://www.vim.org/scripts/script.php?script_id=3542
 
 Small function to save, load, overwrite and delete vim sessions.
-The functions can be accessed both in the plugin -> Sessions tab or with the keyboard.
+:mkview and related commands are not difficult to manage but where to save the sessions and  with what name is sometimes tricky.
 
+This plugin use a dedicate folder ($VIM/vimfiles/session/) to save all sessions, using as name the full path-name to the associated file. This way you don't have to worry about where have you saved your sesion; just you only have to remember what file is associated to the session, open it and press <Shift-F3>
+The functions can be accessed both in the "plugin -> Sessions" tab or with the keyboard.
 
 Usage
------
+---------
 Manage it from the menu in plugins or with the keyboard:
 <F3> to save a session
-Open the file where you saved the session and press <Shift-F3> to load the previously saved session
-<Crtl-Shift-F3> to overwrite an existing session 
+<Shift-F3> to load a session
+<Crtl-Shift-F3> to overwrite an existing session
 d<F3> to delete an existing session
-
-TODO: let customize path where to save the sessions (l:path) from within .vimrc
-
